@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">VoiceAssistent</string>
+    <string name="questionFieldHint">Ask a question</string>
+    <string name="sendButtonText">Send</string>
+</resources>
