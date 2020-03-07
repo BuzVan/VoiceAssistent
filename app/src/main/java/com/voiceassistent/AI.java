@@ -67,7 +67,7 @@ class AI {
             }
 
         }
-        return "Я не знаю когда это будет";
+        return "Я не знаю, когда это будет";
     }
 
 
@@ -89,7 +89,7 @@ class AI {
     private static HashMap<String, String> InitializationDictionary(){
         HashMap<String, String> dict = new HashMap<>();
         dict.put("привет", "Привет");
-        dict.put("как дела", "Не плохо");
+        dict.put("как дела", "Неплохо");
         dict.put("что делаешь", "Отвечаю на вопросы");
         dict.put("чем занимаешься", "Отвечаю на вопросы");
         dict.put("спасибо", "Обращайтесь");

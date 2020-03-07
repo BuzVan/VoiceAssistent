@@ -41,18 +41,24 @@ public class MainActivity extends AppCompatActivity {
         chatMessageList.setLayoutManager(new LinearLayoutManager(this));
         chatMessageList.setAdapter(messageListAdapter);
     }
-/*
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putArray("chat", chatWindow.getText());
+        outState.putSerializable("chat", messageListAdapter.messageList.toArray());
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        chatWindow.append(savedInstanceState.getCharSequence("chat"));
+        Object[] messages = (Object[]) savedInstanceState.getSerializable("chat");
+        for (Object message:
+             messages) {
+            messageListAdapter.messageList.add((Message) message);
+        }
+        messageListAdapter.notifyDataSetChanged();
+        chatMessageList.scrollToPosition(messageListAdapter.messageList.size() -1);
     }
-*/
+
   public void sendButtonOnClick(View view) {
         String text = questionText.getText().toString();
         String answer = AI.getAnswer(text);

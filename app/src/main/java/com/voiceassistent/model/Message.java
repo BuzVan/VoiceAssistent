@@ -1,8 +1,9 @@
 package com.voiceassistent.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Message {
+public class Message implements Serializable {
     public String text;
     public Date date;
     public Boolean isSend;
