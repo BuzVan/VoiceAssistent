@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">VoiceAssistent</string>
+    <string name="app_name">VoiceAssistant</string>
     <string name="questionFieldHint">Задайте вопрос</string>
     <string name="sendButtonText">Отправить</string>
+    <string name="assistantName">Ассистент</string>
+    <string name="userName">Пользователь</string>
 </resources>

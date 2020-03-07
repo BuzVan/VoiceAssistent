@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Locale;
 
 class AI {
     private static HashMap<String,String> dict = InitializationDictionary();
@@ -18,7 +17,8 @@ class AI {
         dict.put("дня рождения", new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR),Calendar.SEPTEMBER, 27));
         dict.put("нового года", new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR) + 1,Calendar.JANUARY, 1));
         Calendar tomorrow = Calendar.getInstance();
-        tomorrow.add(Calendar.DAY_OF_YEAR,1);
+        tomorrow.set(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE));
+        tomorrow.add(Calendar.DATE,1);
         dict.put("завтра", tomorrow);
         return  dict;
     }
@@ -62,27 +62,27 @@ class AI {
                 assert date != null;
                 long msDateDistance = date.getTimeInMillis() - now.getTime();
                 long msDay = 1000 * 60 * 60 * 24;
-                int dayCount = (int) (msDateDistance / msDay) ;
-                return "дней до " + key + ": " + dayCount;
+                int dayCount = (int) (msDateDistance / msDay) + 1;
+                return "Дней до " + key + ": " + dayCount;
             }
 
         }
-        return "я не знаю когда это будет";
+        return "Я не знаю когда это будет";
     }
 
 
     private static String getTodayOfWeek() {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("сегодня EEEE");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("Сегодня EEEE");
         return dateFormat.format(new Date());
     }
 
     private static String getTime() {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("сейчас k:m");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("Сейчас HH:mm");
         return dateFormat.format(new Date());
     }
 
     private static String getToday() {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("сегодня d MMMM, EEEE");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("Сегодня d MMMM, EEEE");
         return dateFormat.format(new Date());
     }
 
@@ -92,7 +92,7 @@ class AI {
         dict.put("как дела", "Не плохо");
         dict.put("что делаешь", "Отвечаю на вопросы");
         dict.put("чем занимаешься", "Отвечаю на вопросы");
-        dict.put("спасибо", "обращайтесь! :)");
+        dict.put("спасибо", "Обращайтесь");
 
         dict.put("сегодня", "&today");
         dict.put("час", "&time");
