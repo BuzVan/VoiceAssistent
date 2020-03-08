@@ -1,4 +1,4 @@
-package com.voiceassistent.adapter;
+package com.voiceassistent.messageView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.voiceassistent.R;
-import com.voiceassistent.holder.MessageViewHolder;
-import com.voiceassistent.model.Message;
 
 import java.util.ArrayList;
 import java.util.List;
