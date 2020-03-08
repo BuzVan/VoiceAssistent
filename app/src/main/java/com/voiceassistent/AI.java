@@ -1,20 +1,16 @@
 package com.voiceassistent;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.util.Consumer;
 
 import com.voiceassistent.forecast.ForecastToString;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,18 +70,16 @@ class AI {
             }
         else callback.accept("Капец вы вопрос задали конешно");
     }
-    private static List<String> answer = new ArrayList<>();
 
 
     private static void getSpecialAnswer(String question, String val, Consumer<String> callback) {
 
         switch (val){
-            case "&today": callback.accept(getToday());
-            case "&time": callback.accept(getTime());
-            case "&day_of_week": callback.accept(getTodayOfWeek());
-            case "&days_before": callback.accept(getDaysBefore(question));
+            case "&today": callback.accept(getToday()); break;
+            case "&time": callback.accept(getTime()); break;
+            case "&day_of_week": callback.accept(getTodayOfWeek()); break;
+            case "&days_before": callback.accept(getDaysBefore(question)); break;
             case "&weather":
-                String[] res = new String[1];
                 getWeather(question, new Consumer<String>() {
                     @Override
                     public void accept(String s) {
