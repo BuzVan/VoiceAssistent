@@ -28,6 +28,25 @@ class AI {
         dict.put("завтра", tomorrow);
         return  dict;
     }
+    private static String getHelp() {
+        return
+                "Вот что вы можете спросить у меня:\n" +
+                        "\tЧем ты можешь ПОМОчь мне\n\n" +
+                        "\tПРИВЕТствую\n\n" +
+                        "\tКАК ДЕЛА\n\n" +
+                        "\tскажи, ЧТО ДЕЛАЕШЬ сейчас или ЧЕМ ЗАНИМАЕШЬСЯ?\n\n" +
+
+                        "\tкакой СЕГОДНЯ день?\n\n" +
+                        "\tсколько ВРЕМени\n\n" +
+                        "\tКакой ДЕНЬ НЕДЕЛИ\n\n" +
+                        "\tСКОЛЬКО ДНЕЙ ДО {нового года / дня рождения}\n\n" +
+                        "\tПОГОДА В ГОРОДЕ {название города}\n\n" +
+
+                        "\tбольшое СПАСИБО за помощь\n\n" +
+
+                        "*большими буквами выделены ключевые слова поиска в словаре";
+    }
+
     private static HashMap<String, String> InitializationDictionary(){
         HashMap<String, String> dict = new HashMap<>();
         dict.put("привет", "Привет");
@@ -42,6 +61,9 @@ class AI {
         dict.put("день недели", "&day_of_week");
         dict.put("сколько дней до", "&days_before");
         dict.put("погода в городе", "&weather");
+
+        dict.put("помощь", "&help");
+        dict.put("помо", "&help");
         return dict;
     }
 
@@ -68,13 +90,14 @@ class AI {
                     });
                 }
             }
-        else callback.accept("Капец вы вопрос задали конешно");
+        else callback.accept("Не поняла Вас");
     }
 
 
     private static void getSpecialAnswer(String question, String val, Consumer<String> callback) {
 
         switch (val){
+            case "&help": callback.accept(getHelp()); break;
             case "&today": callback.accept(getToday()); break;
             case "&time": callback.accept(getTime()); break;
             case "&day_of_week": callback.accept(getTodayOfWeek()); break;
@@ -91,6 +114,7 @@ class AI {
                 throw new IllegalStateException("Unexpected value: " + val);
         }
     }
+
 
     private static void getWeather(String question, Consumer<String> callback){
         Pattern cityPattern = Pattern.compile(
