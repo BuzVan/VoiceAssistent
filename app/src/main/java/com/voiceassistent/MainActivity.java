@@ -87,20 +87,21 @@ public class MainActivity extends AppCompatActivity {
 
   public void sendButtonOnClick(View view) {
         String text = questionText.getText().toString();
-
-
+        questionText.getText().clear();
+        sendButton.setEnabled(false);
         AI.getAnswer(text, new Consumer<String>() {
             @Override
             public void accept(String answer) {
+                textToSpeech.speak(answer, TextToSpeech.QUEUE_FLUSH,null,null);
                 messageListAdapter.messageList.add(new Message(text, true));
                 messageListAdapter.messageList.add(new Message(answer, false));
 
                 messageListAdapter.notifyDataSetChanged();
-
                 chatMessageList.scrollToPosition(messageListAdapter.messageList.size() -1);
 
-                questionText.getText().clear();
-                textToSpeech.speak(answer, TextToSpeech.QUEUE_FLUSH,null,null);
+                sendButton.setEnabled(true);
+
+
             }
         });
     }

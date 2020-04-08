@@ -10,6 +10,7 @@ public class WordsFormService {
      * @return
      */
     public static String getGoodWordFormAfterNum(int t, String word, WordGender gen){
+        t = Math.abs(t);
         if (gen==WordGender.MALE_GENDER){
             if (t>=11 && t<=14) return word + "ов";
             int r = t%10;

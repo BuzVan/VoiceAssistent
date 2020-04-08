@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import androidx.core.util.Consumer;
 
 import com.voiceassistent.forecast.ForecastToString;
+import com.voiceassistent.numToText.TranslateToString;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -41,7 +42,7 @@ class AI {
                         "\tКакой ДЕНЬ НЕДЕЛИ\n\n" +
                         "\tСКОЛЬКО ДНЕЙ ДО {нового года / дня рождения}\n\n" +
                         "\tПОГОДА В ГОРОДЕ {название города}\n\n" +
-
+                        "\tПЕРЕВЕДИ {текст на английксом или число}\n\n" +
                         "\tбольшое СПАСИБО за помощь\n\n" +
 
                         "*большими буквами выделены ключевые слова поиска в словаре";
@@ -64,6 +65,9 @@ class AI {
 
         dict.put("помощь", "&help");
         dict.put("помо", "&help");
+        dict.put("переведи", "&translate");
+
+        dict.put("скажи ", "&say_text");
         return dict;
     }
 
@@ -102,20 +106,43 @@ class AI {
             case "&time": callback.accept(getTime()); break;
             case "&day_of_week": callback.accept(getTodayOfWeek()); break;
             case "&days_before": callback.accept(getDaysBefore(question)); break;
-            case "&weather":
-                getWeather(question, new Consumer<String>() {
-                    @Override
-                    public void accept(String s) {
-                        callback.accept(s);
-                    }
-                });
-                break;
+            case "&translate": getTranslation(question, s ->callback.accept(s));break;
+            case "&weather": getWeather(question, s -> callback.accept(s)); break;
+            case "&say_text": callback.accept(getRepeatText(question));  break;
             default:
                 throw new IllegalStateException("Unexpected value: " + val);
         }
     }
 
+    private static String getRepeatText(String question) {
+        Pattern translPattern = Pattern.compile(
+                // . - любой символ. Т.е. можно попросить ассистента: "Переведи Hello, world!"
+                "скажи(.+)",
+                Pattern.CASE_INSENSITIVE);
+        Matcher matcher = translPattern.matcher(question);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        else  return "скажи";
+    }
 
+    private static void getTranslation(String question, Consumer<String> callback){
+        Pattern translPattern = Pattern.compile(
+                // . - любой символ. Т.е. можно попросить ассистента: "Переведи Hello, world!"
+                "переведи (.+)",
+                Pattern.CASE_INSENSITIVE);
+        Matcher matcher = translPattern.matcher(question);
+        if (matcher.find()) {
+            final String[] text = {matcher.group(1)};
+            TranslateToString.getTranslate(text[0], new Consumer<String>() {
+                @Override
+                public void accept(String text) {
+                    callback.accept(text);
+                }
+            });
+        }
+        else callback.accept("Я не поняла");
+    }
     private static void getWeather(String question, Consumer<String> callback){
         Pattern cityPattern = Pattern.compile(
                 "погода в городе (\\p{L}+)",
