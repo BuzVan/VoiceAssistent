@@ -2,11 +2,18 @@ package com.voiceassistent;
 
 import android.annotation.SuppressLint;
 
+import androidx.core.util.Consumer;
+
+import com.voiceassistent.forecast.ForecastToString;
+import com.voiceassistent.numToText.TranslateToString;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class AI {
     private static HashMap<String,String> dict = InitializationDictionary();
@@ -22,34 +29,135 @@ class AI {
         dict.put("завтра", tomorrow);
         return  dict;
     }
+    private static String getHelp() {
+        return
+                "Вот что вы можете спросить у меня:\n" +
+                        "\tЧем ты можешь ПОМОчь мне\n\n" +
+                        "\tПРИВЕТствую\n\n" +
+                        "\tКАК ДЕЛА\n\n" +
+                        "\tскажи, ЧТО ДЕЛАЕШЬ сейчас или ЧЕМ ЗАНИМАЕШЬСЯ?\n\n" +
 
-    static String getAnswer(String question){
+                        "\tкакой СЕГОДНЯ день?\n\n" +
+                        "\tсколько ВРЕМени\n\n" +
+                        "\tКакой ДЕНЬ НЕДЕЛИ\n\n" +
+                        "\tСКОЛЬКО ДНЕЙ ДО {нового года / дня рождения}\n\n" +
+                        "\tПОГОДА В ГОРОДЕ {название города}\n\n" +
+                        "\tПЕРЕВЕДИ {текст на английксом или число}\n\n" +
+                        "\tбольшое СПАСИБО за помощь\n\n" +
+
+                        "*большими буквами выделены ключевые слова поиска в словаре";
+    }
+
+    private static HashMap<String, String> InitializationDictionary(){
+        HashMap<String, String> dict = new HashMap<>();
+        dict.put("привет", "Привет");
+        dict.put("как дела", "Неплохо");
+        dict.put("что делаешь", "Отвечаю на вопросы");
+        dict.put("чем занимаешься", "Отвечаю на вопросы");
+        dict.put("спасибо", "Обращайтесь");
+
+        dict.put("сегодня", "&today");
+        dict.put("час", "&time");
+        dict.put("врем", "&time");
+        dict.put("день недели", "&day_of_week");
+        dict.put("сколько дней до", "&days_before");
+        dict.put("погода в городе", "&weather");
+
+        dict.put("помощь", "&help");
+        dict.put("помо", "&help");
+        dict.put("переведи", "&translate");
+
+        dict.put("скажи ", "&say_text");
+        return dict;
+    }
+
+    static void getAnswer(String question, Consumer<String> callback){
         question = question.toLowerCase();
+        String val = null;
         for (String key:
                 dict.keySet()) {
             if (question.contains(key))
             {
-                String val = dict.get(key);
-                assert val != null;
-                if (!val.startsWith("&")) return val;
+                val = dict.get(key);
+                break;
+            }
+        }
+        if (val!=null){
+
+                if (!val.startsWith("&"))  callback.accept(val);
                 else{
-                    return getSpecialAnswer(question, val);
+                     getSpecialAnswer(question, val, new Consumer<String>() {
+                        @Override
+                        public void accept(String s) {
+                            callback.accept(s);
+                        }
+                    });
                 }
             }
-
-        }
-        return "Капец вы вопрос задали конешно...";
+        else callback.accept("Не поняла Вас");
     }
 
-    private static String getSpecialAnswer(String question, String val) {
+
+    private static void getSpecialAnswer(String question, String val, Consumer<String> callback) {
+
         switch (val){
-            case "&today": return getToday();
-            case "&time": return getTime();
-            case "&day_of_week": return getTodayOfWeek();
-            case "&days_before": return getDaysBefore(question);
+            case "&help": callback.accept(getHelp()); break;
+            case "&today": callback.accept(getToday()); break;
+            case "&time": callback.accept(getTime()); break;
+            case "&day_of_week": callback.accept(getTodayOfWeek()); break;
+            case "&days_before": callback.accept(getDaysBefore(question)); break;
+            case "&translate": getTranslation(question, s ->callback.accept(s));break;
+            case "&weather": getWeather(question, s -> callback.accept(s)); break;
+            case "&say_text": callback.accept(getRepeatText(question));  break;
             default:
                 throw new IllegalStateException("Unexpected value: " + val);
         }
+    }
+
+    private static String getRepeatText(String question) {
+        Pattern translPattern = Pattern.compile(
+                // . - любой символ. Т.е. можно попросить ассистента: "Переведи Hello, world!"
+                "скажи(.+)",
+                Pattern.CASE_INSENSITIVE);
+        Matcher matcher = translPattern.matcher(question);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        else  return "скажи";
+    }
+
+    private static void getTranslation(String question, Consumer<String> callback){
+        Pattern translPattern = Pattern.compile(
+                // . - любой символ. Т.е. можно попросить ассистента: "Переведи Hello, world!"
+                "переведи (.+)",
+                Pattern.CASE_INSENSITIVE);
+        Matcher matcher = translPattern.matcher(question);
+        if (matcher.find()) {
+            final String[] text = {matcher.group(1)};
+            TranslateToString.getTranslate(text[0], new Consumer<String>() {
+                @Override
+                public void accept(String text) {
+                    callback.accept(text);
+                }
+            });
+        }
+        else callback.accept("Я не поняла");
+    }
+    private static void getWeather(String question, Consumer<String> callback){
+        Pattern cityPattern = Pattern.compile(
+                "погода в городе (\\p{L}+)",
+                Pattern.CASE_INSENSITIVE);
+        Matcher matcher = cityPattern.matcher(question);
+        if (matcher.find()) {
+            final String[] cityName = {matcher.group(1)};
+            ForecastToString.getForecast(cityName[0], new Consumer<String>() {
+                @Override
+                public void accept(String s) {
+                    callback.accept(s);
+                }
+            });
+        }
+        else callback.accept("Я не поняла ");
     }
 
     private static String getDaysBefore(String question) {
@@ -86,19 +194,5 @@ class AI {
         return dateFormat.format(new Date());
     }
 
-    private static HashMap<String, String> InitializationDictionary(){
-        HashMap<String, String> dict = new HashMap<>();
-        dict.put("привет", "Привет");
-        dict.put("как дела", "Неплохо");
-        dict.put("что делаешь", "Отвечаю на вопросы");
-        dict.put("чем занимаешься", "Отвечаю на вопросы");
-        dict.put("спасибо", "Обращайтесь");
 
-        dict.put("сегодня", "&today");
-        dict.put("час", "&time");
-        dict.put("врем", "&time");
-        dict.put("день недели", "&day_of_week");
-        dict.put("сколько дней до", "&days_before");
-        return dict;
-    }
 }

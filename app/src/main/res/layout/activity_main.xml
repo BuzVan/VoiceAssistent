@@ -24,23 +24,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:inputType="textPersonName"
             android:hint="@string/questionFieldHint"
-            android:text=""
-            android:importantForAutofill="no" />
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:text="" />
 
         <Button
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/sendButtonText"
-            android:onClick="sendButtonOnClick"/>
+            android:onClick="sendButtonOnClick"
+            android:text="@string/sendButtonText" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+
+
         android:id="@+id/chatMessageList"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -49,5 +51,10 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:itemCount="20"
+        tools:listitem="@layout/recycler_view_item_1" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

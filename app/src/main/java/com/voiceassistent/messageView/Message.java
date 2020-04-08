@@ -1,4 +1,4 @@
-package com.voiceassistent.model;
+package com.voiceassistent.messageView;
 
 import java.io.Serializable;
 import java.util.Date;
