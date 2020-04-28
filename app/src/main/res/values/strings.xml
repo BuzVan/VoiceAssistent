@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">VoiceAssistant</string>
     <string name="questionFieldHint">Задайте вопрос</string>
     <string name="sendButtonText">Отправить</string>
     <string name="assistantName">Ассистент</string>
     <string name="userName">Пользователь</string>
+    <string name="app_name">Голосовой Ассистент</string>
+    <string name="a_day_of_week">Сегодня</string>
+
+
 </resources>
