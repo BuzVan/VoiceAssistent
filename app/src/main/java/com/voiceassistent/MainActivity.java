@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -25,9 +25,10 @@ public class MainActivity extends AppCompatActivity {
     protected RecyclerView chatMessageList;
     protected MessageListAdapter messageListAdapter;
     protected LinearLayoutManager layoutManager;
-    private  boolean isScrollDown = false;
+    private  boolean IslastItemVisible = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AI.setContext(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -38,20 +39,23 @@ public class MainActivity extends AppCompatActivity {
         chatMessageList.setLayoutManager(new LinearLayoutManager(this));
         chatMessageList.setAdapter(messageListAdapter);
         layoutManager = (LinearLayoutManager) chatMessageList.getLayoutManager();
+        //cобытие при пролистывании
         chatMessageList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (dy!=0)
-                    isScrollDown = layoutManager.findLastVisibleItemPosition() == chatMessageList.getAdapter().getItemCount() - 1;
+                    IslastItemVisible = layoutManager.findLastVisibleItemPosition() == chatMessageList.getAdapter().getItemCount() - 1;
             }
         });
 
+        //событие при изменении размеров экрана (при открытии клавиатуры)
         chatMessageList.addOnLayoutChangeListener(new RecyclerView.OnLayoutChangeListener() {
 
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if (isScrollDown && oldBottom> bottom){
+                if (IslastItemVisible && oldBottom > bottom)
+                {
                     chatMessageList.post(() -> chatMessageList.scrollToPosition(messageListAdapter.messageList.size() -1));
                 }
             }
@@ -61,19 +65,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onInit(int status) {
                 if (status!=TextToSpeech.ERROR){
-                    textToSpeech.setLanguage(new Locale("ru"));
+                    Log.i("LocaleDef", Locale.getDefault().toLanguageTag());
+                    textToSpeech.setLanguage(Locale.getDefault());
                 }
             }
         });
     }
-
+    //сохранение данных
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putSerializable("chat", messageListAdapter.messageList.toArray());
         outState.putInt("last_visible_item_rv",layoutManager.findLastCompletelyVisibleItemPosition());
         super.onSaveInstanceState(outState);
     }
-
+    // восстановление данных
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         Object[] messages = (Object[]) savedInstanceState.getSerializable("chat");
@@ -86,24 +91,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
   public void sendButtonOnClick(View view) {
-        String text = questionText.getText().toString();
-        questionText.getText().clear();
-        sendButton.setEnabled(false);
-        AI.getAnswer(text, new Consumer<String>() {
-            @Override
-            public void accept(String answer) {
-                textToSpeech.speak(answer, TextToSpeech.QUEUE_FLUSH,null,null);
-                messageListAdapter.messageList.add(new Message(text, true));
-                messageListAdapter.messageList.add(new Message(answer, false));
+        String text = questionText.getText().toString().trim();
+        if (text.length()>0){
+            questionText.getText().clear();
+            sendButton.setEnabled(false);
+            AI.getAnswer(text, new Consumer<String>() {
+                @Override
+                public void accept(String answer) {
+                    textToSpeech.speak(answer, TextToSpeech.QUEUE_FLUSH,null,null);
+                    messageListAdapter.messageList.add(new Message(text, true));
+                    messageListAdapter.messageList.add(new Message(answer, false));
 
-                messageListAdapter.notifyDataSetChanged();
-                chatMessageList.scrollToPosition(messageListAdapter.messageList.size() -1);
+                    messageListAdapter.notifyDataSetChanged();
+                    chatMessageList.scrollToPosition(messageListAdapter.messageList.size() -1);
 
-                sendButton.setEnabled(true);
+                    sendButton.setEnabled(true);
+                    IslastItemVisible = true;
 
+                }
+            });
+        }
 
-            }
-        });
     }
 
 

@@ -1,48 +1,57 @@
 package com.voiceassistent.forecast;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.core.util.Consumer;
 
+import com.voiceassistent.R;
 import com.voiceassistent.Service.WordGender;
 import com.voiceassistent.Service.WordsFormService;
 import com.voiceassistent.numToText.TranslateToString;
+
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ForecastToString {
-    public static void getForecast(final String city, final Consumer<String> callback){
+    public static void getForecast(Context context, final String city, final Consumer<String> callback){
         ForecastApi api = ForecastService.getApi();
         Call<Forecast> call = api.getCurrentWeather(city);
         call.enqueue(new Callback<Forecast>() {
             @Override
             public void onResponse(Call<Forecast> call, Response<Forecast> response) {
                 Forecast result = response.body();
-                if (result!=null){
 
-                    TranslateToString.getTranslate(result.current.weather_descriptions.get(0), new Consumer<String>() {
-                        @Override
-                        public void accept(String s) {
-                            String descr = "";
-                            if (!s.equals("не могу перевести")) descr = s;
-                            String answer = "Сейчас в городе " + city + " " +
-                                    result.current.temperature + " " +
-                                    WordsFormService.getGoodWordFormAfterNum(result.current.temperature, "градус", WordGender.MALE_GENDER) +
-                                    ". " + descr;
-                            callback.accept(answer);
-                        }
-                    });
-
+                if (result!=null && result.current !=null){
+                    Log.i("Language", Locale.getDefault().getLanguage());
+                    if (Locale.getDefault().getLanguage().equals("ru"))
+                    {
+                        TranslateToString.getTranslate(context, result.current.weather_descriptions.get(0), new Consumer<String>() {
+                            @Override
+                            public void accept(String s) {
+                                String descr = "";
+                                if (!s.equals( context.getString(R.string.translate_error))) descr = s;
+                                String answer = String.format("%s %s %d %s. %s", context.getString(R.string.now_in_city), city, result.current.temperature, WordsFormService.getGoodWordFormAfterNum(result.current.temperature, "градус", WordGender.MALE_GENDER), descr);
+                                callback.accept(answer);
+                            }
+                        });
+                    }
+                    else if (Locale.getDefault().getLanguage().equals("en")) {
+                        String answer = String.format("%s %s %d°. %s", context.getString(R.string.now_in_city), city, result.current.temperature, result.current.weather_descriptions.get(0));
+                        callback.accept(answer);
+                    }
+                    else callback.accept(context.getString(R.string.weather_error));
                 }
-                else callback.accept("Не могу узнать погоду");
+                else callback.accept(context.getString(R.string.weather_error));
             }
 
             @Override
             public void onFailure(Call<Forecast> call, Throwable t) {
                 Log.v("WEATHER", t.getMessage());
-                callback.accept("Нет соединения с интернетом");
+                callback.accept(context.getString(R.string.internet_error));
             }
         });
 
