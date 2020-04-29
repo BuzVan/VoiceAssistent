@@ -7,21 +7,21 @@
     <string name="before_birthday">birthday</string>
     <string name="q_days_before">days before</string>
     <string name="before_new_year">new year</string>
-    <string name="before_tomorrow">tomorrow</string>
+    <string name="tomorrow">tomorrow</string>
     <string name="q_hi">hi</string>
     <string name="q_how_are_you">how are you</string>
     <string name="q_what_doing">what are you doing</string>
     <string name="q_what_doing_2">what are you doing</string>
     <string name="q_thank">thank</string>
-    <string name="q_today">today</string>
+    <string name="today">today</string>
     <string name="q_time">time</string>
     <string name="q_time2">time</string>
     <string name="q_day_of_week">day of the week</string>
     <string name="q_weather_in_city">weather in</string>
     <string name="q_help">help</string>
     <string name="q_translate">translate</string>
-    <string name="q_say">say</string>
-    <string name="a_hi">Hellow!</string>
+    <string name="q_say">repeat</string>
+    <string name="a_hi">Hello!</string>
     <string name="a_how_are_you">OK</string>
     <string name="a_what_doing">I\'m answering your question</string>
     <string name="a_thank">You\'re Welcome!</string>
@@ -35,16 +35,20 @@
     <string name="a_time">Now is</string>
     <string name="a_today">Today is</string>
     <string name="help_info">What you can ask me:
-        \n\tHELP me
-        \n\n\tHI
-        \n\n\tHOW ARE YOU?
-        \n\n\tWHAT ARE YOU DOING?
-        \n\n\tWhat day is it TODAY?
-        \n\n\tWhat TIME is it?
-        \n\n\tWhat DAY OF THE WEEK is today?
-        \n\n\tHow many DAYS BEFORE {new year / birthday}?
-        \n\n\tWhat\'s the WEATHER IN {city name}?
-        \n\n\tTRANSLATE {text on English or digit}
-        \n\n\tTHANK you
+        \n\nHELP me
+        \n\nHI
+        \n\nHOW ARE YOU?
+        \n\nWHAT ARE YOU DOING?
+        \n\nWhat day is it TODAY?
+        \n\nWhat TIME is it?
+        \n\nWhat DAY OF THE WEEK is today?
+        \n\nHow many DAYS BEFORE {new year / birthday}?
+        \n\nWhat\'s the WEATHER IN {city name}?
+        \n\nTRANSLATE {text on English or digit}
+        \n\nHOLIDAY {yesterday / today / tomorrow / 10 May / 10 5 / 10.5}
+        \n\nTHANK you
         \n\n*CAPITAL letters indicate dictionary search keywords</string>
+    <string name="q_holiday">holiday</string>
+    <string name="yesterday">yesterday</string>
+    <string name="a_no_holidays">I don\'t know any holidays on this day</string>
 </resources>

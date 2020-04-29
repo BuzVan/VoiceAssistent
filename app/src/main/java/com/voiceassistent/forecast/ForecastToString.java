@@ -6,8 +6,8 @@ import android.util.Log;
 import androidx.core.util.Consumer;
 
 import com.voiceassistent.R;
-import com.voiceassistent.Service.WordGender;
-import com.voiceassistent.Service.WordsFormService;
+import com.voiceassistent.wordService.WordGender;
+import com.voiceassistent.wordService.WordsFormService;
 import com.voiceassistent.numToText.TranslateToString;
 
 import java.util.Locale;
@@ -29,7 +29,7 @@ public class ForecastToString {
                     Log.i("Language", Locale.getDefault().getLanguage());
                     if (Locale.getDefault().getLanguage().equals("ru"))
                     {
-                        TranslateToString.getTranslate(context, result.current.weather_descriptions.get(0), new Consumer<String>() {
+                        TranslateToString.getTranslate(context,"en-ru", result.current.weather_descriptions.get(0), new Consumer<String>() {
                             @Override
                             public void accept(String s) {
                                 String descr = "";

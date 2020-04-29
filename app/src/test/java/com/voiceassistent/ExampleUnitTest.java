@@ -1,6 +1,10 @@
 package com.voiceassistent;
 
+import com.voiceassistent.htmlParsing.ParsingHtmlService;
+
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +15,15 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    public void holiday_answer(){
+        try {
+            System.out.println( ParsingHtmlService.getHolidays("20 марта 2021"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void answer_holiday(){
+        System.out.println( AI.getDate("какой праздник 25.2"));
     }
 }

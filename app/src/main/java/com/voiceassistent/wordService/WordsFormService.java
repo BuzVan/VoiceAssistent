@@ -1,6 +1,4 @@
-package com.voiceassistent.Service;
-
-import java.util.HashMap;
+package com.voiceassistent.wordService;
 
 public class WordsFormService {
     /**
