@@ -2,7 +2,6 @@ package com.voiceassistent;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.core.util.Consumer;
@@ -21,11 +20,15 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 class AI {
     private static Context context;
     private static HashMap<String,String> dict;
     private static HashMap<String,Calendar> dates;
-    public static  void setContext(Context Context) {
+    static  void setContext(Context Context) {
         context = Context;
         dict = InitializationDictionary();
         dates = InitializationDates();
@@ -94,12 +97,7 @@ class AI {
 
                 if (!val.startsWith("&"))  callback.accept(val);
                 else{
-                     getSpecialAnswer(question, val, new Consumer<String>() {
-                        @Override
-                        public void accept(String s) {
-                            callback.accept(s);
-                        }
-                    });
+                     getSpecialAnswer(question, val, callback);
                 }
             }
         else callback.accept(context.getString(R.string.question_error));
@@ -114,10 +112,10 @@ class AI {
             case "&time": callback.accept(getTime()); break;
             case "&day_of_week": callback.accept(getTodayOfWeek()); break;
             case "&days_before": callback.accept(getDaysBefore(question)); break;
-            case "&translate": getTranslation(question, s ->callback.accept(s));break;
-            case "&weather": getWeather(question, s -> callback.accept(s)); break;
+            case "&translate": getTranslation(question, callback);break;
+            case "&weather": getWeather(question, callback); break;
             case "&say_text": callback.accept(getRepeatText(question));  break;
-            case "&holiday": getHolidays(question, s -> callback.accept(s)); break;
+            case "&holiday": getHolidays(question, callback); break;
             default:
                 throw new IllegalStateException("Unexpected value: " + val);
         }
@@ -127,6 +125,7 @@ class AI {
         String findDate = getDate(question);
         Log.i("DATE", findDate );
         final String[] answer = {""};
+        /*
         new AsyncTask<String, Integer, Void>(){
             @Override
             protected Void doInBackground(String... strings) {
@@ -166,10 +165,46 @@ class AI {
                     callback.accept(answer[0]);
             }
         }.execute(findDate);
+        */
+        Observable.fromCallable(() -> {
+            try {
+                ArrayList<String> holidays = ParsingHtmlService.getHolidays(findDate);
+                Log.i("BACKGROUND", findDate );
+                if (holidays.size() ==0) {
+                    return context.getString(R.string.a_no_holidays);
+                }
+                String res =  "";
+                for (String str:
+                        holidays) {
+                    res+= (String.format("%s\n", str));
+                }
+                
+                res = res.trim();
+                if (Locale.getDefault().getLanguage().equals("en")) {
+                    TranslateToString.getTranslate(context, "ru-en", res, new Consumer<String>() {
+                        @Override
+                        public void accept(String s) {
+                            callback.accept(s);
+                        }
+                    });
+                    return answer[0];
+                }
+                else  return res;
+            } catch (Exception e) {
+                return context.getString(R.string.question_error);
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((result) -> {
+                    if (result.length()>0)
+                        callback.accept(result);
+                });
+
     }
 
     @SuppressLint("SimpleDateFormat")
-    public static String getDate(String question) {
+    private static String getDate(String question) {
         String[] patterns = {
                 "d MMMM",
                 "d MM",

@@ -95,24 +95,22 @@ public class MainActivity extends AppCompatActivity {
         if (text.length()>0){
             questionText.getText().clear();
             sendButton.setEnabled(false);
-            AI.getAnswer(text, new Consumer<String>() {
-                @Override
-                public void accept(String answer) {
-                    textToSpeech.speak(answer, TextToSpeech.QUEUE_FLUSH,null,null);
-                    messageListAdapter.messageList.add(new Message(text, true));
-                    messageListAdapter.messageList.add(new Message(answer, false));
+            messageListAdapter.messageList.add(new Message(text, true));
+            messageListAdapter.notifyDataSetChanged();
+            chatMessageList.scrollToPosition(messageListAdapter.messageList.size() -1);
+            AI.getAnswer(text, answer -> {
+                textToSpeech.speak(answer, TextToSpeech.QUEUE_FLUSH,null,null);
 
-                    messageListAdapter.notifyDataSetChanged();
-                    chatMessageList.scrollToPosition(messageListAdapter.messageList.size() -1);
+                messageListAdapter.messageList.add(new Message(answer, false));
+                messageListAdapter.notifyDataSetChanged();
 
-                    sendButton.setEnabled(true);
-                    IslastItemVisible = true;
+                chatMessageList.scrollToPosition(messageListAdapter.messageList.size() -1);
+                sendButton.setEnabled(true);
+                IslastItemVisible = true;
 
-                }
             });
         }
 
     }
-
 
 }
