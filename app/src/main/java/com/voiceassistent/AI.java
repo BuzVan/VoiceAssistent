@@ -265,12 +265,9 @@ class AI {
         Matcher matcher = translPattern.matcher(question);
         if (matcher.find()) {
             final String[] text = {matcher.group(1)};
-            TranslateToString.getTranslate(context,"en-ru",text[0], new Consumer<String>() {
-                @Override
-                public void accept(String text) {
-                    callback.accept(text);
-                }
-            });
+            String lang = "en-ru";
+            if (Locale.getDefault().getLanguage().equals("en")) lang = "ru-en";
+            TranslateToString.getTranslate(context,lang, text[0], callback::accept);
         }
         else callback.accept(context.getString(R.string.question_error));
     }
