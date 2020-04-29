@@ -6,17 +6,14 @@ import android.util.Log;
 import androidx.core.util.Consumer;
 
 import com.voiceassistent.R;
-import com.voiceassistent.Service.WordGender;
-import com.voiceassistent.Service.WordsFormService;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 public class TranslateToString {
-    public static void getTranslate(Context context, final String text, final Consumer<String> callback){
+    public static void getTranslate(Context context, final String lang, final String text, final Consumer<String> callback){
         TranslateApi api = TranslateService.getApi();
-        Call<Translate> call = api.getTranslate(text);
+        Call<Translate> call = api.getTranslate(lang, text);
         call.enqueue(new Callback<Translate>() {
             @Override
             public void onResponse(Call<Translate> call, Response<Translate> response) {

@@ -1,4 +1,4 @@
-package com.voiceassistent.Service;
+package com.voiceassistent.wordService;
 
 public enum WordGender {
     MALE_GENDER,

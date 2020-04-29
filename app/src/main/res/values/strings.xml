@@ -5,6 +5,8 @@
     <string name="userName">Пользователь</string>
     <string name="app_name">Голосовой Ассистент</string>
     <string name="a_day_of_week">Сегодня</string>
+    <string name="q_holiday">праздник</string>
+    <string name="yesterday">вчера</string>
 
 
 </resources>
