@@ -8,7 +8,7 @@ import androidx.core.util.Consumer;
 import com.voiceassistent.R;
 import com.voiceassistent.wordService.WordGender;
 import com.voiceassistent.wordService.WordsFormService;
-import com.voiceassistent.numToText.TranslateToString;
+import com.voiceassistent.translate.TranslateToString;
 
 import java.util.Locale;
 
@@ -26,10 +26,13 @@ public class ForecastToString {
                 Forecast result = response.body();
 
                 if (result!=null && result.current !=null){
+                    Log.i("Forecast", "get answer: ");
                     Log.i("Language", Locale.getDefault().getLanguage());
                     if (Locale.getDefault().getLanguage().equals("ru"))
                     {
-                        TranslateToString.getTranslate(context,"en-ru", result.current.weather_descriptions.get(0), new Consumer<String>() {
+                        String descr ="In the street " +  result.current.weather_descriptions.get(0);
+                        Log.i("Forecast", "Description: " + descr);
+                        TranslateToString.getTranslate(context,"en-ru", descr, new Consumer<String>() {
                             @Override
                             public void accept(String s) {
                                 String descr = "";

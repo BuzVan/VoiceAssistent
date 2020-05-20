@@ -51,4 +51,6 @@
     <string name="q_holiday">holiday</string>
     <string name="yesterday">yesterday</string>
     <string name="a_no_holidays">I don\'t know any holidays on this day</string>
+    <string name="day_theme">Day Theme</string>
+    <string name="night_theme">Night Theme</string>
 </resources>

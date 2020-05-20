@@ -1,4 +1,4 @@
-package com.voiceassistent.numToText;
+package com.voiceassistent.translate;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
