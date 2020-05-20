@@ -7,8 +7,9 @@
     <string name="a_day_of_week">Сегодня</string>
     <string name="q_holiday">праздник</string>
     <string name="yesterday">вчера</string>
-    <string name="day_theme">Девная тема</string>
+    <string name="day_theme">Дневная тема</string>
     <string name="night_theme">Ночная тема</string>
+    <string name="clear_dialog">Очистить диалог</string>
 
 
 </resources>
