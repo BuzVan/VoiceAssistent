@@ -8,7 +8,7 @@ import androidx.core.util.Consumer;
 
 import com.voiceassistent.forecast.ForecastToString;
 import com.voiceassistent.htmlParsing.ParsingHtmlService;
-import com.voiceassistent.numToText.TranslateToString;
+import com.voiceassistent.translate.TranslateToString;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ class AI {
     private static void getHolidays(String question, Consumer<String> callback) {
         String findDate = getDate(question);
         Log.i("DATE", findDate );
-        final String[] answer = {""};
+        String answer = "";
         /*
         new AsyncTask<String, Integer, Void>(){
             @Override
@@ -169,7 +169,6 @@ class AI {
         Observable.fromCallable(() -> {
             try {
                 ArrayList<String> holidays = ParsingHtmlService.getHolidays(findDate);
-                Log.i("BACKGROUND", findDate );
                 if (holidays.size() ==0) {
                     return context.getString(R.string.a_no_holidays);
                 }
@@ -178,7 +177,7 @@ class AI {
                         holidays) {
                     res+= (String.format("%s\n", str));
                 }
-                
+
                 res = res.trim();
                 if (Locale.getDefault().getLanguage().equals("en")) {
                     TranslateToString.getTranslate(context, "ru-en", res, new Consumer<String>() {
@@ -187,7 +186,7 @@ class AI {
                             callback.accept(s);
                         }
                     });
-                    return answer[0];
+                    return answer;
                 }
                 else  return res;
             } catch (Exception e) {
@@ -220,7 +219,7 @@ class AI {
         Matcher matcher = pattern.matcher(question);
         if (matcher.find()) {
             question = matcher.group().toLowerCase();
-            System.out.println(question);
+            Log.i("Date matcher", question);
             int i = 0;
             boolean exit = false;
             while (!exit && i < patterns.length) {
@@ -234,6 +233,7 @@ class AI {
             }
             if (exit) return mainDataFormat.format(date);
         }
+        else return context.getString(R.string.question_error);
         //поиск даты в словаре
         for (String key:
                 dates.keySet()) {
@@ -264,29 +264,21 @@ class AI {
                 Pattern.CASE_INSENSITIVE);
         Matcher matcher = translPattern.matcher(question);
         if (matcher.find()) {
-            final String[] text = {matcher.group(1)};
-            TranslateToString.getTranslate(context,"en-ru",text[0], new Consumer<String>() {
-                @Override
-                public void accept(String text) {
-                    callback.accept(text);
-                }
-            });
+            String text = matcher.group(1);
+            String lang = "en-ru";
+            if (Locale.getDefault().getLanguage().equals("en")) lang = "ru-en";
+            TranslateToString.getTranslate(context,lang, text, callback::accept);
         }
         else callback.accept(context.getString(R.string.question_error));
     }
     private static void getWeather(String question, Consumer<String> callback){
         Pattern cityPattern = Pattern.compile(
-                context.getString(R.string.q_weather_in_city) + " (\\p{L}+)",
+                context.getString(R.string.q_weather_in_city) + " (.+)",
                 Pattern.CASE_INSENSITIVE);
         Matcher matcher = cityPattern.matcher(question);
         if (matcher.find()) {
-            final String[] cityName = {matcher.group(1)};
-            ForecastToString.getForecast(context, cityName[0], new Consumer<String>() {
-                @Override
-                public void accept(String s) {
-                    callback.accept(s);
-                }
-            });
+            String cityName = matcher.group(1);
+            ForecastToString.getForecast(context, cityName, callback);
         }
         else callback.accept(context.getString(R.string.question_error));
     }

@@ -1,4 +1,4 @@
-package com.voiceassistent.numToText;
+package com.voiceassistent.translate;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

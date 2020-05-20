@@ -5,7 +5,7 @@
     <string name="a_what_doing">Отвечаю на вопросы</string>
     <string name="a_thank">Обращайтесь</string>
     <string name="translate_error">не могу перевести</string>
-    <string name="now_in_city">Сейчас в городе</string>
+    <string name="now_in_city">В городе</string>
     <string name="internet_error">Нет соединения с интернетом</string>
     <string name="weather_error">Не могу узнать погоду</string>
     <string name="help_info">Вот что вы можете спросить у меня:

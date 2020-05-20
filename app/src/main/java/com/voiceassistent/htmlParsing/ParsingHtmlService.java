@@ -22,11 +22,12 @@ public class ParsingHtmlService {
     public static ArrayList<String> getHolidays(String date) throws Exception {
         Document document = Jsoup.connect(URL).get();
         Element body = document.body();
-        Elements holidays =  body.getElementsContainingOwnText(date).last().parent().parent().select("li");
+        Element day =  body.getElementsContainingOwnText(date).first();
+        Elements holidays = day.parent().parent().select("li");
         ArrayList<String> holidays_str = new ArrayList<>();
         for (Element element:
              holidays) {
-            holidays_str.add(element.text());
+            holidays_str.add(element.selectFirst("a").text());
         }
         return  holidays_str;
     }
