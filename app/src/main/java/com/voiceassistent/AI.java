@@ -214,36 +214,36 @@ class AI {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat;
         Date date = null;
 
-       Pattern pattern = Pattern.compile( "\\d{1,2}[\\s.](\\d{1,2}|[а-яА-Яa-zA-Z]+)",
-                Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(question);
-        if (matcher.find()) {
-            question = matcher.group().toLowerCase();
-            Log.i("Date matcher", question);
-            int i = 0;
-            boolean exit = false;
-            while (!exit && i < patterns.length) {
-                try {
-                    date = new SimpleDateFormat(patterns[i]).parse(question);
-                    exit = true;
-                    System.out.println(patterns[i]);
-                } catch (Exception e) {
-                    i++;
-                }
-            }
-            if (exit) return mainDataFormat.format(date);
-        }
-        else return context.getString(R.string.question_error);
         //поиск даты в словаре
-        for (String key:
+        for (String key :
                 dates.keySet()) {
-            if (question.contains(key)){
+            if (question.contains(key)) {
                 date = dates.get(key).getTime();
-                break;
+                return mainDataFormat.format(date);
             }
         }
-        if (date!=null) return mainDataFormat.format(date);
-        else return context.getString(R.string.question_error);
+        //проба с явным представлением даты
+        Pattern pattern = Pattern.compile("\\D*");
+        Matcher matcher = pattern.matcher(question);
+
+        if (matcher.find()) {
+            question = question.replace(matcher.group(),"");
+        }
+        Log.i("Date question", question);
+        int i = 0;
+        boolean exit = false;
+        while (!exit && i < patterns.length) {
+            try {
+                Log.i("Date pattern",patterns[i]);
+                date = new SimpleDateFormat(patterns[i]).parse(question);
+                exit = true;
+
+            } catch (Exception e) {
+                i++;
+            }
+        }
+        if (exit) return mainDataFormat.format(date);
+        return context.getString(R.string.question_error);
     }
 
     private static String getRepeatText(String question) {
